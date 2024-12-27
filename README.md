@@ -2,6 +2,8 @@
 
 Minilog is a minimalistic logging library for C++ applications.
 
+The project requires C++20 or later.
+
 ## Features
 
 - Lightweight and easy to integrate
