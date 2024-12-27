@@ -35,26 +35,6 @@ namespace details {
         return "unknown";
     }
 
-    template <class T>
-    struct with_source_location {
-    private:
-        T inner_;
-        std::source_location location_;
-
-    public:
-        template <class U> requires std::constructible_from<T, U>
-        consteval with_source_location(U&& inner, std::source_location location = std::source_location::current())
-            : inner_(std::forward<U>(inner)), location_(location) {}
-
-        constexpr const T& get() const noexcept {
-            return inner_;
-        }
-
-        constexpr const std::source_location& location() const noexcept {
-            return location_;
-        }
-    };
-
     inline log_level g_log_level_threshold = []() -> log_level {
         if (auto level = std::getenv("MINILOG_LEVEL"); level != nullptr) {
             if (std::string_view(level) == "trace") return log_level::trace;
@@ -85,6 +65,11 @@ namespace details {
             g_log_file << msg + '\n';
         }
     }
+
+    template <typename... Args>
+    inline void log_with_source_location(log_level level, std::source_location location, std::format_string<Args...> fmt, Args&&... args) {
+        output_log(level, std::format(fmt, std::forward<Args>(args)...), location);
+    }
 }
 
 inline void set_log_level_threshold(log_level level) {
@@ -96,16 +81,13 @@ inline void set_log_file(const std::string& filename) {
 }
 
 template <typename... Args>
-void log(log_level level, details::with_source_location<std::format_string<Args...>> fmt, Args&&... args) {
-    if (level < details::g_log_level_threshold) {
-        return;
-    }
-    details::output_log(level, std::format(fmt.get(), std::forward<Args>(args)...), fmt.location());
+void log(log_level level, std::format_string<Args...> fmt, Args&&... args) {
+    details::log_with_source_location(level, std::source_location::current(), fmt, std::forward<Args>(args)...);
 }
 
 #define _LOG_LEVEL(level) \
     template <typename... Args> \
-    void log_##level(details::with_source_location<std::format_string<Args...>> fmt, Args&&... args) { \
+    void log_##level(std::format_string<Args...> fmt, Args&&... args) { \
         log(log_level::level, fmt, std::forward<Args>(args)...); \
     }
 MINILOG_FOREACH_LOG_LEVEL(_LOG_LEVEL)
