@@ -1,3 +1,39 @@
+/**
+ * @file minilog.hpp
+ * @brief A lightweight logging library for C++.
+ *
+ * This header file defines a simple logging library that provides various log levels,
+ * formatted logging, and the ability to log messages to both the console and a file.
+ * The log level threshold and log file can be configured via environment variables
+ * or programmatically.
+ *
+ * The available log levels are:
+ * - trace
+ * - debug
+ * - info
+ * - warning
+ * - error
+ * - fatal
+ *
+ * The log level threshold can be set using the `MINILOG_LEVEL` environment variable.
+ * The log file can be specified using the `MINILOG_FILE` environment variable.
+ *
+ * Example usage:
+ * @code
+ * #include "minilog.hpp"
+ *
+ * int main() {
+ *     minilog::set_log_level_threshold(minilog::log_level::debug);
+ *     minilog::set_log_file("app.log");
+ *
+ *     minilog::log_info("Application started");
+ *     minilog::log_debug("Debugging information: {}", 42);
+ *     minilog::log_error("An error occurred: {}", "file not found");
+ *
+ *     return 0;
+ * }
+ * @endcode
+ */
 #pragma once
 
 #include <iostream>
@@ -72,14 +108,43 @@ namespace details {
     }
 }
 
+/**
+ * @brief Sets the global log level threshold.
+ *
+ * This function sets the global log level threshold, which determines the minimum
+ * severity level of log messages that will be processed and displayed.
+ *
+ * @param level The log level threshold to set. Log messages with a severity level
+ *              lower than this threshold will be ignored.
+ */
 inline void set_log_level_threshold(log_level level) {
     details::g_log_level_threshold = level;
 }
 
+/**
+ * @brief Sets the log file to the specified filename.
+ *
+ * This function opens the log file in append mode. If the file does not exist,
+ * it will be created. If the file exists, new log entries will be appended to it.
+ *
+ * @param filename The name of the file to be used for logging.
+ */
 inline void set_log_file(const std::string& filename) {
     details::g_log_file.open(filename, std::ios::app);
 }
 
+/**
+ * @brief Logs a formatted message with a specified log level.
+ *
+ * This function logs a message with the given log level and format string.
+ * It also captures the current source location (file, line, function) where
+ * the log function is called.
+ *
+ * @tparam Args The types of the arguments to be formatted.
+ * @param level The log level (e.g., debug, info, warning, error).
+ * @param fmt The format string, which follows the same syntax as std::format.
+ * @param args The arguments to be formatted according to the format string.
+ */
 template <typename... Args>
 void log(log_level level, std::format_string<Args...> fmt, Args&&... args) {
     details::log_with_source_location(level, std::source_location::current(), fmt, std::forward<Args>(args)...);
