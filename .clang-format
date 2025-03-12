@@ -1,0 +1,11 @@
+BasedOnStyle: LLVM
+IndentWidth: 4
+AlwaysBreakTemplateDeclarations: Yes
+PointerAlignment: Left
+ReferenceAlignment: Pointer
+SpaceAfterTemplateKeyword: false
+ColumnLimit: 120
+AccessModifierOffset: -4
+SortIncludes: false
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortEnumsOnASingleLine: false
