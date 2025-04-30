@@ -4,7 +4,7 @@ int main() {
     // Initialize the logger with a log file name and
     // whether to log asynchronously(default is true).
     // You must init the logger before any logging.
-    MINILOG_INIT("mini.log"); // same as "MINILOG_INIT("mini.log", INFO, true)"
+    MINILOG_INIT("mini.log"); // same as "MINILOG_INIT("mini.log", true)"
 
     // Enable logging to console(default is true)
     // and set the level threshold for console(default is INFO).
