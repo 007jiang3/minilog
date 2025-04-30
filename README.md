@@ -10,8 +10,9 @@ The project requires C++20 or later.
 #include "minilog.hpp"
 
 int main() {
-    // Initialize the logger with a log file name, log level threshold, and whether to log
-    // asynchronously. You must init the logger before any logging.
+    // Initialize the logger with a log file name and
+    // whether to log asynchronously(default is true).
+    // You must init the logger before any logging.
     MINILOG_INIT("mini.log"); // same as "MINILOG_INIT("mini.log", INFO, true)"
 
     // Enable logging to console(default is true)
@@ -40,7 +41,8 @@ int main() {
     MINILOG_ERROR("this is an error message: {}", true);
     MINILOG_FATAL("this is a fatal message: {}", "Stack Overflow");
 
-    // // Shutdown the logger manually. The destructor will also shutdown the logger automatically.
+    // // Shutdown the logger manually.
+    // // The destructor will also shutdown the logger automatically.
     // // The calling is not MT-safe.
     // MINILOG_SHUTDOWN();
 
